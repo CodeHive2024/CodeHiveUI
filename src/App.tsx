@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/Landing";
-import SignIn from "./pages/Landing/SignIn";
 import { ApolloProvider } from "@apollo/client";
 import client from "./config/ApolloClient";
 

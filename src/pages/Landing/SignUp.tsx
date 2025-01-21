@@ -30,7 +30,7 @@ const SignUp: React.FC = () => {
     phoneNumber: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target; // Destructure name and value from the input event
     console.log("here35", name, value);
 
@@ -40,9 +40,10 @@ const SignUp: React.FC = () => {
     }));
   };
 
-  const [createUser, { loading, error }] = useMutation(CREATE_USER);
+  // const [createUser, { loading, error }] = useMutation(CREATE_USER);
+  const [createUser] = useMutation(CREATE_USER);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await createUser({ variables: { ...formData } });
@@ -54,12 +55,14 @@ const SignUp: React.FC = () => {
   return (
     <section className="py-12 bg-white sm:py-16 lg:py-20">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div style={{ textAlign: "center", fontSize: "30px" }}>CodeHive</div>
+        <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl xl:text-5xl font-pj text-center">
+          CodeHive
+        </h1>
 
         <div className="grid max-w-lg grid-cols-1 mx-auto mt-8 gap-y-12 lg:mt-24 lg:max-w-none lg:grid-cols-2">
           <div className="lg:px-12 xl:px-16">
             <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl xl:text-5xl font-pj">
-              Join CodeHive
+              Join to Build
             </h1>
 
             <form
@@ -163,7 +166,7 @@ const SignUp: React.FC = () => {
           </div>
           <div className="lg:px-12 xl:px-16">
             <h3 className="text-3xl font-bold text-gray-900 sm:text-4xl font-pj">
-              Grow your business fast with Rareblocks UI Kit.
+              Grow your business fast with CodeHive UI Kit.
             </h3>
 
             <svg

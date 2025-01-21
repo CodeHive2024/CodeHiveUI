@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18 # Ensure this version matches your Elastic Beanstalk environment
+    commands:
+      - echo Installing dependencies...
+      - npm install # Install dependencies
+
+  build:
+    commands:
+      - echo Building the project with Vite...
+      - npm run build # Runs Vite build to bundle the app into the dist/ directory
+
+  post_build:
+    commands:
+      - echo Build completed.
+      - echo Preparing deployment package...
+      - zip -r dist/deployment.zip dist/ # Zip the dist/ directory for deployment
+
+artifacts:
+  files:
+    - dist/deployment.zip # Zip artifact to be used for deployment
+  discard-paths: true

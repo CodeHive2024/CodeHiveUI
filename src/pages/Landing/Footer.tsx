@@ -206,9 +206,7 @@ const Footer = () => {
 
             <form action="#" method="POST" className="mt-6">
               <div>
-                <label for="email" className="sr-only">
-                  Email
-                </label>
+                <label className="sr-only">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -231,7 +229,7 @@ const Footer = () => {
         <hr className="mt-16 mb-10 border-gray-200" />
 
         <p className="text-sm text-center text-gray-600">
-          © Copyright 2021, All Rights Reserved by Postcraft
+          © Copyright 2021, All Rights Reserved by CodeHive
         </p>
       </div>
     </section>
