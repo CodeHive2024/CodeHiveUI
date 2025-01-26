@@ -1,9 +1,11 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import LandingPage from "./pages/Landing";
 import { ApolloProvider } from "@apollo/client";
 import client from "./config/ApolloClient";
 import io from "socket.io-client";
 import { useState, useEffect } from "react";
+import Hives from "./pages/Hives";
+import NavBar from "./components/NavBar";
 
 function App() {
   const [serverMessage, setServerMessage] = useState(""); // State to store the server's response
@@ -36,14 +38,36 @@ function App() {
     socket.emit("clientMessage", clientMessage); // Emit a message from the client
   };
 
+  const loggedIn = true;
+  let routes;
+  if (loggedIn) {
+    routes = (
+      <div className="flex flex-col h-screen">
+        <NavBar />
+        <div className="flex-grow">
+          {" "}
+          {/* Content area */}
+          <Routes>
+            <Route path="/" element={<Hives />} />{" "}
+            <Route path="*" element={<Navigate to="/" />} />{" "}
+          </Routes>
+        </div>
+      </div>
+    );
+  } else {
+    routes = (
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/sign-in" element={<LandingPage />} />
+        <Route path="/hives" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    );
+  }
+
   return (
     <ApolloProvider client={client}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/sign-in" element={<LandingPage />} />
-        </Routes>
-      </BrowserRouter>
+      <BrowserRouter>{routes}</BrowserRouter>
     </ApolloProvider>
   );
 }
