@@ -16,10 +16,8 @@ phases:
   post_build:
     commands:
       - echo Build completed.
-      - echo Preparing deployment package...
-      - zip -r dist/deployment.zip dist/ # Zip the dist/ directory for deployment
 
 artifacts:
   files:
-    - dist/deployment.zip # Zip artifact to be used for deployment
+    - dist/* # Zip artifact to be used for deployment
   discard-paths: true
