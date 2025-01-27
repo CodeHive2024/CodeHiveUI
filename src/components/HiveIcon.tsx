@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 const HiveIcon = () => {
-  const Notification = () => {
-    return (
-      <div className="w-[5px] h-[10px] rounded-br-full rounded-tr-full bg-blue-500"></div>
-    );
-  };
+  // const Notification = () => {
+  //   return (
+  //     <div className="w-[5px] h-[10px] rounded-br-full rounded-tr-full bg-blue-500"></div>
+  //   );
+  // };
 
   const Selected = () => {
     return (
