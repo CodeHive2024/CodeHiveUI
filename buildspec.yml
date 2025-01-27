@@ -19,5 +19,6 @@ phases:
 
 artifacts:
   files:
-    - dist/**/* # Zip artifact to be used for deployment
+    - "**/*" # Zip artifact to be used for deployment
+  base-directory: dist
   discard-paths: true
