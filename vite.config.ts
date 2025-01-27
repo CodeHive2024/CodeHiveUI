@@ -17,17 +17,17 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "tailwindcss";
 import fs from "fs-extra";
 
-const copyProcfile = () => {
+const copyBuildFiles = () => {
   return {
-    name: "copy-procfile",
+    name: "copy-build-files",
     closeBundle() {
-      fs.copyFile("Procfile", "dist/Procfile");
+      fs.copyFile("package.json", "dist/package.json");
     },
   };
 };
 
 export default defineConfig({
-  plugins: [react(), copyProcfile()],
+  plugins: [react(), copyBuildFiles()],
   css: {
     postcss: {
       plugins: [tailwindcss()],
