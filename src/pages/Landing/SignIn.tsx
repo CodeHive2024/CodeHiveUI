@@ -2,6 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../../hooks/useAuth";
 
 const SignIn = () => {
   const LOGIN = gql`
@@ -21,6 +22,8 @@ const SignIn = () => {
   `;
 
   const navigate = useNavigate();
+
+  const { storeAuthDataInLocalStorage } = useAuth();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -54,6 +57,11 @@ const SignIn = () => {
         );
         navigate("/verification", { state: { username: formData.username } });
       } else {
+        storeAuthDataInLocalStorage(
+          response.data.login.idToken,
+          response.data.login.accessToken,
+          response.data.login.refreshToken
+        );
         toast.success("Logging you in!", { autoClose: 10000 });
         navigate("/");
       }

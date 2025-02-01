@@ -8,8 +8,11 @@ import Hives from "./pages/Hives";
 import NavBar from "./components/NavBar";
 import { ToastContainer } from "react-toastify";
 import Verification from "./pages/Landing/Verification";
+import { useAuth } from "./hooks/useAuth";
 
 function App() {
+  const { isLoggedIn } = useAuth();
+
   useEffect(() => {
     // Connect to the Socket.IO server (make sure to match the server URL)
     const socket = io("http://localhost:3001");
@@ -30,9 +33,8 @@ function App() {
     };
   }, []);
 
-  const loggedIn = false;
   let routes;
-  if (loggedIn) {
+  if (isLoggedIn()) {
     routes = (
       <div className="flex flex-col h-screen">
         <NavBar />
