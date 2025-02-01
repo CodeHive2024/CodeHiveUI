@@ -1,33 +1,23 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const SignIn = () => {
-  const LOGIN = gql`
-    mutation Login($username: String!, $password: String!) {
-      login(username: $username, password: $password) {
-        ... on AuthTokens {
-          idToken
-          accessToken
-          refreshToken
-        }
-        ... on AuthMessage {
-          code
-          message
-        }
+const Verification: React.FC = () => {
+  const VERIFY_CODE = gql`
+    mutation VerifyCode($username: String!, $code: String!) {
+      verifyCode(username: $username, code: $code) {
+        code
+        message
       }
     }
   `;
 
-  const navigate = useNavigate();
+  const { username } = useLocation().state;
 
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    code: "",
   });
-
-  const [login] = useMutation(LOGIN);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target; // Destructure name and value from the input event
@@ -38,6 +28,11 @@ const SignIn = () => {
     }));
   };
 
+  // const [createUser, { loading, error }] = useMutation(CREATE_USER);
+  const [verifyCode] = useMutation(VERIFY_CODE);
+
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -45,18 +40,12 @@ const SignIn = () => {
         (value) => value === "" || value === null || value === undefined
       );
       if (hasEmptyValues) {
-        throw new Error("Please fill out all fields.");
+        throw new Error("Please enter verification code.");
       }
-      const response = await login({ variables: { ...formData } });
-      if (response.data.login.code === "USER_NOT_CONFIRMED") {
-        toast.success(
-          "Account not verified yet, redirecting to verification, and a new code will be sent out shortly."
-        );
-        navigate("/verification", { state: { username: formData.username } });
-      } else {
-        toast.success("Logging you in!", { autoClose: 10000 });
-        navigate("/");
-      }
+      await verifyCode({ variables: { ...formData, username } });
+      toast.success("Successfully verified account. Going to sign in page...", {
+        onClose: () => navigate("/sign-in"),
+      });
     } catch (err) {
       toast.error((err as Error).message, { autoClose: 10000 });
     }
@@ -65,65 +54,17 @@ const SignIn = () => {
   return (
     <section className="py-12 bg-white sm:py-16 lg:py-20">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="">
-          <img
-            className="w-auto h-8 mx-auto"
-            src="https://cdn.rareblocks.xyz/collection/clarity/images/logo.svg"
-            alt=""
-          />
-        </div>
+        <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl xl:text-5xl font-pj text-center">
+          CodeHive
+        </h1>
 
         <div className="grid max-w-lg grid-cols-1 mx-auto mt-8 gap-y-12 lg:mt-24 lg:max-w-none lg:grid-cols-2">
           <div className="lg:px-12 xl:px-16">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl xl:text-5xl font-pj">
-                Use CodeHive
-              </h1>
-
-              <div className="flex justify-center flex-shrink-0 mt-8 -space-x-4 overflow-hidden">
-                <img
-                  className="inline-block rounded-full w-14 h-14 ring-2 ring-white"
-                  src="https://cdn.rareblocks.xyz/collection/clarity/images/sign-up/1/avatar-male-1.png"
-                  alt=""
-                />
-                <img
-                  className="inline-block rounded-full w-14 h-14 ring-2 ring-white"
-                  src="https://cdn.rareblocks.xyz/collection/clarity/images/sign-up/1/avatar-female-1.png"
-                  alt=""
-                />
-                <img
-                  className="inline-block rounded-full w-14 h-14 ring-2 ring-white"
-                  src="https://cdn.rareblocks.xyz/collection/clarity/images/sign-up/1/avatar-female-2.png"
-                  alt=""
-                />
-                <img
-                  className="inline-block rounded-full w-14 h-14 ring-2 ring-white"
-                  src="https://cdn.rareblocks.xyz/collection/clarity/images/sign-up/1/avatar-female-3.png"
-                  alt=""
-                />
-                <img
-                  className="inline-block rounded-full w-14 h-14 ring-2 ring-white"
-                  src="https://cdn.rareblocks.xyz/collection/clarity/images/sign-up/1/avatar-male-2.png"
-                  alt=""
-                />
-                <img
-                  className="inline-block rounded-full w-14 h-14 ring-2 ring-white"
-                  src="https://cdn.rareblocks.xyz/collection/clarity/images/sign-up/1/avatar-female-4.png"
-                  alt=""
-                />
-                <img
-                  className="inline-block rounded-full w-14 h-14 ring-2 ring-white"
-                  src="https://cdn.rareblocks.xyz/collection/clarity/images/sign-up/1/avatar-female-5.png"
-                  alt=""
-                />
-              </div>
-
-              <p className="px-4 mt-5 text-lg font-normal text-gray-900 sm:px-0 font-pj">
-                See what other{" "}
-                <span className="font-bold">4600+ Developers</span> are doing
-              </p>
-            </div>
-
+            <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl xl:text-5xl font-pj">
+              Verify
+            </h1>{" "}
+            <br />
+            <p>A verification code has been sent to your email.</p>
             <form
               action="#"
               method="POST"
@@ -132,128 +73,40 @@ const SignIn = () => {
             >
               <div className="space-y-3">
                 <div>
-                  <label className="sr-only"> Email address </label>
-                  <div>
-                    <input
-                      onChange={handleChange}
-                      type="email"
-                      name="username"
-                      id="username"
-                      placeholder="Email address"
-                      className="
-                                        block
-                                        w-full
-                                        px-4
-                                        py-4
-                                        overflow-hidden
-                                        text-base
-                                        font-normal
-                                        text-gray-900
-                                        placeholder-gray-600
-                                        transition-all
-                                        duration-200
-                                        border border-gray-300
-                                        caret-gray-900
-                                        rounded-xl
-                                        bg-gray-50
-                                        focus:outline-none focus:bg-white focus:border-gray-900 focus:ring-gray-900
-                                        font-pj
-                                    "
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="code"
+                    value={formData.code}
+                    onChange={handleChange}
+                    placeholder="Enter verification code"
+                    className="block w-full px-4 py-4 overflow-hidden text-base font-normal text-gray-900 placeholder-gray-600 transition-all duration-200 border border-gray-300 caret-gray-900 rounded-xl bg-gray-50 focus:outline-none focus:bg-white focus:border-gray-900 focus:ring-gray-900 font-pj"
+                  />
                 </div>
-
-                <div>
-                  <label className="sr-only"> Password </label>
-                  <div>
-                    <input
-                      onChange={handleChange}
-                      type="password"
-                      name="password"
-                      id="password"
-                      placeholder="Password (min. 8 characters)"
-                      className="
-                                        block
-                                        w-full
-                                        px-4
-                                        py-4
-                                        overflow-hidden
-                                        text-base
-                                        font-normal
-                                        text-gray-900
-                                        placeholder-gray-600
-                                        transition-all
-                                        duration-200
-                                        border border-gray-300
-                                        caret-gray-900
-                                        rounded-xl
-                                        bg-gray-50
-                                        focus:outline-none focus:bg-white focus:border-gray-900 focus:ring-gray-900
-                                        font-pj
-                                    "
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center">
-                  <div className="flex items-center h-5">
-                    <input
-                      type="checkbox"
-                      name="terms"
-                      id="terms"
-                      className="w-5 h-5 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
-                    />
-                  </div>
-
-                  <div className="ml-3 text-base">
-                    <label className="font-normal text-gray-900 font-pj">
-                      {" "}
-                      Remember me{" "}
-                    </label>
-                  </div>
-                </div>
-
-                <a
-                  href="#"
-                  title=""
-                  className="text-base font-medium text-gray-500 rounded hover:text-gray-900 font-pj hover:underline focus:outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
-                >
-                  {" "}
-                  Forgot Password?{" "}
-                </a>
               </div>
 
               <div className="relative mt-8">
-                <div className="absolute -inset-2">
-                  <div className="w-full h-full mx-auto opacity-30 blur-lg filter x"></div>
-                </div>
-
                 <button
                   type="submit"
                   className="relative flex items-center justify-center w-full px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 font-pj hover:bg-gray-600"
                 >
-                  Login
+                  Verify Code
                 </button>
               </div>
             </form>
-
-            <p className="mt-4 text-base text-center text-gray-900 font-pj">
-              Don’t have an account?{" "}
+            {/* <p className="mt-4 text-base text-center text-gray-900 font-pj">
+              Already joined?{" "}
               <Link
-                to="/"
+                to="/sign-in"
                 title=""
                 className="font-bold rounded hover:underline focus:outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
               >
-                Create for Free
+                Login now
               </Link>
-            </p>
+            </p> */}
           </div>
-
           <div className="lg:px-12 xl:px-16">
             <h3 className="text-3xl font-bold text-gray-900 sm:text-4xl font-pj">
-              Grow your business fast with Rareblocks UI Kit.
+              Grow your business fast with CodeHive UI Kit.
             </h3>
 
             <svg
@@ -455,9 +308,11 @@ const SignIn = () => {
               </li>
             </ul>
           </div>
+          <div className="lg:px-12 xl:px-16"></div>
         </div>
       </div>
     </section>
   );
 };
-export default SignIn;
+
+export default Verification;

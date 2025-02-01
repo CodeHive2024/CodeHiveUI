@@ -1,38 +1,38 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignUp: React.FC = () => {
   const CREATE_USER = gql`
     mutation Signup(
-      $username: String!
-      $password: String!
       $email: String!
-      $phoneNumber: String
+      $firstName: String!
+      $lastName: String!
+      $password: String!
     ) {
       signup(
-        username: $username
-        password: $password
         email: $email
-        phoneNumber: $phoneNumber
+        firstName: $firstName
+        lastName: $lastName
+        password: $password
       ) {
-        username
         email
-        phoneNumber
+        firstName
+        lastName
       }
     }
   `;
 
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
     email: "",
-    phoneNumber: "",
+    firstName: "",
+    lastName: "",
+    password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target; // Destructure name and value from the input event
-    console.log("here35", name, value);
 
     setFormData((prevData) => ({
       ...prevData, // Spread the previous state
@@ -43,12 +43,33 @@ const SignUp: React.FC = () => {
   // const [createUser, { loading, error }] = useMutation(CREATE_USER);
   const [createUser] = useMutation(CREATE_USER);
 
+  const [isChecked, setIsChecked] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChecked(event.target.checked);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await createUser({ variables: { ...formData } });
+      const hasEmptyValues = Object.values(formData).some(
+        (value) => value === "" || value === null || value === undefined
+      );
+      if (hasEmptyValues) {
+        throw new Error("Please fill out all fields.");
+      }
+      if (!isChecked) {
+        throw new Error("Please agree with terms and conditions.");
+      }
+      const response = await createUser({ variables: { ...formData } });
+
+      navigate("/verification", {
+        state: { username: response.data.signup.email },
+      });
     } catch (err) {
-      console.error(err);
+      toast.error((err as Error).message, { autoClose: 10000 });
     }
   };
 
@@ -86,10 +107,10 @@ const SignUp: React.FC = () => {
                 <div>
                   <input
                     type="text"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
-                    placeholder="Phone Number"
+                    placeholder="First Name"
                     className="block w-full px-4 py-4 overflow-hidden text-base font-normal text-gray-900 placeholder-gray-600 transition-all duration-200 border border-gray-300 caret-gray-900 rounded-xl bg-gray-50 focus:outline-none focus:bg-white focus:border-gray-900 focus:ring-gray-900 font-pj"
                   />
                 </div>
@@ -97,10 +118,10 @@ const SignUp: React.FC = () => {
                 <div>
                   <input
                     type="text"
-                    name="username"
-                    value={formData.username}
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
-                    placeholder="Username"
+                    placeholder="Last Name"
                     className="block w-full px-4 py-4 overflow-hidden text-base font-normal text-gray-900 placeholder-gray-600 transition-all duration-200 border border-gray-300 caret-gray-900 rounded-xl bg-gray-50 focus:outline-none focus:bg-white focus:border-gray-900 focus:ring-gray-900 font-pj"
                   />
                 </div>
@@ -123,6 +144,7 @@ const SignUp: React.FC = () => {
                     type="checkbox"
                     name="terms"
                     id="terms"
+                    onChange={handleCheckboxChange}
                     className="w-5 h-5 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
                   />
                 </div>

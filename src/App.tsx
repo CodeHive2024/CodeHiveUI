@@ -6,6 +6,8 @@ import io from "socket.io-client";
 import { useEffect } from "react";
 import Hives from "./pages/Hives";
 import NavBar from "./components/NavBar";
+import { ToastContainer } from "react-toastify";
+import Verification from "./pages/Landing/Verification";
 
 function App() {
   useEffect(() => {
@@ -28,7 +30,7 @@ function App() {
     };
   }, []);
 
-  const loggedIn = true;
+  const loggedIn = false;
   let routes;
   if (loggedIn) {
     routes = (
@@ -50,6 +52,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/sign-in" element={<LandingPage />} />
         <Route path="/hives" element={<Navigate to="/" />} />
+        <Route path="/verification" element={<Verification />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     );
@@ -57,6 +60,7 @@ function App() {
 
   return (
     <ApolloProvider client={client}>
+      <ToastContainer />
       <BrowserRouter>{routes}</BrowserRouter>
     </ApolloProvider>
   );
