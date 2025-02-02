@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar";
 import { ToastContainer } from "react-toastify";
 import Verification from "./pages/Landing/Verification";
 import { useAuth } from "./hooks/useAuth";
+import Call from "./pages/Call";
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -43,6 +44,7 @@ function App() {
           {/* Content area */}
           <Routes>
             <Route path="/" element={<Hives />} />{" "}
+            <Route path="/call" element={<Call />} />
             <Route path="*" element={<Navigate to="/" />} />{" "}
           </Routes>
         </div>
