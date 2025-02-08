@@ -30,11 +30,12 @@ call.join({ create: true });
 
 export default function Call() {
   return (
-    <StreamVideo client={client}>
-      <StreamCall call={call}>
-        <MyUILayout />
-      </StreamCall>
-    </StreamVideo>
+    // <StreamVideo client={client}>
+    //   <StreamCall call={call}>
+    //     <MyUILayout />
+    //   </StreamCall>
+    // </StreamVideo>
+    <div></div>
   );
 }
 
@@ -47,9 +48,10 @@ export const MyUILayout = () => {
   }
 
   return (
-    <StreamTheme>
-      <SpeakerLayout participantsBarPosition="bottom" />
-      <CallControls />
-    </StreamTheme>
+    // <StreamTheme>
+    //   <SpeakerLayout participantsBarPosition="bottom" />
+    //   <CallControls />
+    // </StreamTheme>
+    <></>
   );
 };

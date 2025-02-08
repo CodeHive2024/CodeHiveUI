@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import Verification from "./pages/Landing/Verification";
 import { useAuth } from "./hooks/useAuth";
 import Call from "./pages/Call";
+import Search from "./pages/Search";
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -44,7 +45,8 @@ function App() {
           {/* Content area */}
           <Routes>
             <Route path="/" element={<Hives />} />{" "}
-            <Route path="/call" element={<Call />} />
+            {/* <Route path="/call" element={<Call />} /> */}
+            <Route path="/search" element={<Search />} />
             <Route path="*" element={<Navigate to="/" />} />{" "}
           </Routes>
         </div>
