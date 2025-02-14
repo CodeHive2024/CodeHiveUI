@@ -6,18 +6,18 @@ import { toast } from "react-toastify";
 const SignUp: React.FC = () => {
   const CREATE_USER = gql`
     mutation Signup(
-      $email: String!
+      $username: String!
       $firstName: String!
       $lastName: String!
       $password: String!
     ) {
       signup(
-        email: $email
+        username: $username
         firstName: $firstName
         lastName: $lastName
         password: $password
       ) {
-        email
+        username
         firstName
         lastName
       }
@@ -25,7 +25,7 @@ const SignUp: React.FC = () => {
   `;
 
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     firstName: "",
     lastName: "",
     password: "",
@@ -66,7 +66,7 @@ const SignUp: React.FC = () => {
       const response = await createUser({ variables: { ...formData } });
 
       navigate("/verification", {
-        state: { username: response.data.signup.email },
+        state: { username: response.data.signup.username },
       });
     } catch (err) {
       toast.error((err as Error).message, { autoClose: 10000 });
@@ -96,10 +96,10 @@ const SignUp: React.FC = () => {
                 <div>
                   <input
                     type="email"
-                    name="email"
-                    value={formData.email}
+                    name="username"
+                    value={formData.username}
                     onChange={handleChange}
-                    placeholder="Email address"
+                    placeholder="username address"
                     className="block w-full px-4 py-4 overflow-hidden text-base font-normal text-gray-900 placeholder-gray-600 transition-all duration-200 border border-gray-300 caret-gray-900 rounded-xl bg-gray-50 focus:outline-none focus:bg-white focus:border-gray-900 focus:ring-gray-900 font-pj"
                   />
                 </div>
